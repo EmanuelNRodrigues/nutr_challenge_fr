@@ -6,7 +6,7 @@ import {
     CalendarDays,
     Globe,
 } from "lucide-react";
-
+import Button from "../common/Button";
 import AppointmentModal from "../appointments/AppointmentModal";
 
 export default function NutritionistCard({ nutritionist }) {
@@ -129,44 +129,19 @@ export default function NutritionistCard({ nutritionist }) {
 
                     {/* Actions */}
                     <div className="flex w-48 shrink-0 flex-col gap-3">
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setIsAppointmentOpen(true)
-                            }
-                            className="
-                                flex h-12 items-center
-                                justify-center gap-2
-                                rounded-lg
-                                bg-[rgb(248,229,224)]
-                                font-semibold
-                                text-[rgb(248,150,108)]
-                                transition
-                                hover:brightness-95
-                            "
+                        <Button
+                            variant="lightorange"
+                            onClick={() => setIsAppointmentOpen(true)}
                         >
-                            <CalendarDays size={18} />
-
                             Schedule Appointment
-                        </button>
+                        </Button>
 
-                        <button
-                            type="button"
-                            className="
-                                flex h-11 items-center
-                                justify-center gap-2
-                                rounded-lg
-                                bg-[rgb(221,249,239)]
-                                font-semibold
-                                text-[rgb(61,170,141)]
-                                transition
-                                hover:bg-[rgb(205,244,231)]
-                            "
+                        <Button
+                            variant="lightgreen"
+                            onClick={() => null }
                         >
-                            <Globe size={17} />
-
                             Website
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </article>

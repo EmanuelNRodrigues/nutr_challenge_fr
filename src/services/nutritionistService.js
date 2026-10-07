@@ -8,13 +8,9 @@ export async function searchNutritionists({ query, location }) {
 
     if (location.trim()) {
         params.append("location_address", location.trim());
-    } else {
-        params.append("location_address", "Braga");
     }
 
-    const response = await fetch(
-        `${API_URL}?${params.toString()}`
-    );
+    const response = await fetch(`${API_URL}?${params.toString()}`);
 
     if (!response.ok) {
         throw new Error("Failed to fetch nutritionists");

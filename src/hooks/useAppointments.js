@@ -11,9 +11,10 @@ export default function useAppointments(nutritionistId) {
         async function fetchAppointments() {
             try {
                 setLoading(true);
+                setError(null);
 
                 const response = await fetch(
-                    `${API_URL}/nutritionist/${nutritionistId}/appointments`
+                    `${API_URL}/nutritionist/${nutritionistId}/pending_appointments`
                 );
 
                 if (!response.ok) {
@@ -21,15 +22,43 @@ export default function useAppointments(nutritionistId) {
                 }
 
                 const data = await response.json();
-                setAppointments(data);
+
+                const formattedAppointments = data.map((appointment) => {
+                    const startDate = new Date(
+                        appointment.start_date_time
+                    );
+
+                    return {
+                        id: appointment.id,
+                        guestName: appointment.guest_name,
+                        guestEmail: appointment.guest_email,
+
+                        serviceName: appointment.service_name,
+                        servicePrice: appointment.service_price,
+                        serviceDuration: appointment.service_duration,
+
+                        date: startDate.toLocaleDateString("pt-PT"),
+                        time: startDate.toLocaleTimeString("pt-PT", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        }),
+
+                        status: appointment.status,
+                    };
+                });
+
+                setAppointments(formattedAppointments);
             } catch (error) {
+                console.error("Failed to fetch appointments:", error);
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
         }
 
-        fetchAppointments();
+        if (nutritionistId) {
+            fetchAppointments();
+        }
     }, [nutritionistId]);
 
     async function acceptAppointment(appointmentId) {
@@ -44,9 +73,10 @@ export default function useAppointments(nutritionistId) {
             throw new Error("Failed to accept appointment");
         }
 
-        // Remove the accepted appointment from the pending list
         setAppointments((current) =>
-            current.filter((appointment) => appointment.id !== appointmentId)
+            current.filter(
+                (appointment) => appointment.id !== appointmentId
+            )
         );
     }
 
@@ -62,9 +92,10 @@ export default function useAppointments(nutritionistId) {
             throw new Error("Failed to reject appointment");
         }
 
-        // Remove the rejected appointment from the pending list
         setAppointments((current) =>
-            current.filter((appointment) => appointment.id !== appointmentId)
+            current.filter(
+                (appointment) => appointment.id !== appointmentId
+            )
         );
     }
 

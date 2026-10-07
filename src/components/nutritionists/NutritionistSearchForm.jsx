@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
+import Button from "../common/Button";
 
 export default function NutritionistSearchForm({ onSearch }) {
     const [query, setQuery] = useState("");
@@ -19,10 +20,6 @@ export default function NutritionistSearchForm({ onSearch }) {
             <div className="flex items-end gap-4">
                 {/* Name / Service */}
                 <div className="flex-1">
-                    <label className="mb-2 block text-sm font-medium text-white">
-                        Name or Service
-                    </label>
-
                     <input
                         type="text"
                         value={query}
@@ -44,10 +41,6 @@ export default function NutritionistSearchForm({ onSearch }) {
 
                 {/* Location */}
                 <div className="flex-1">
-                    <label className="mb-2 block text-sm font-medium text-white">
-                        Location
-                    </label>
-
                     <input
                         type="text"
                         value={location}
@@ -68,22 +61,14 @@ export default function NutritionistSearchForm({ onSearch }) {
                 </div>
 
                 {/* Search */}
-                <button
+                <Button
                     type="submit"
-                    className="
-                        flex h-12 items-center gap-2
-                        rounded-lg
-                        bg-[rgb(228,150,108)]
-                        px-7
-                        font-semibold text-white
-                        shadow-sm
-                        transition
-                        hover:brightness-95
-                    "
+                    variant="orange"
+                    className="flex h-12 items-center gap-2 px-7"
                 >
                     <Search size={19} />
                     Search
-                </button>
+                </Button>
             </div>
         </form>
     );

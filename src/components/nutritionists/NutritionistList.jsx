@@ -3,10 +3,7 @@ import NutritionistCard from "./NutritionistCard";
 
 const ITEMS_PER_PAGE = 10;
 
-export default function NutritionistList({
-                                             nutritionists,
-                                             hasSearched,
-                                         }) {
+export default function NutritionistList({ nutritionists }) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(
@@ -22,14 +19,6 @@ export default function NutritionistList({
         );
     }, [nutritionists, currentPage]);
 
-    if (!hasSearched) {
-        return (
-            <div className="py-16 text-center text-gray-500">
-                Search for a nutritionist to get started.
-            </div>
-        );
-    }
-
     if (nutritionists.length === 0) {
         return (
             <div className="py-16 text-center text-gray-500">
@@ -40,6 +29,7 @@ export default function NutritionistList({
 
     function goToPage(page) {
         setCurrentPage(page);
+
         window.scrollTo({
             top: 0,
             behavior: "smooth",
