@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createAppointment } from "../../services/appointmentService";
+import Button from "../common/Button.jsx";
 
 function generateTimeSlots() {
     const slots = [];
@@ -31,7 +32,93 @@ export default function AppointmentForm({
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const timeSlots = generateTimeSlots();
+    const timeSlots = useMemo(
+        () => generateTimeSlots(),
+        []
+    );
+
+    const today = useMemo(() => {
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }, []);
+
+    const availableTimeSlots = useMemo(() => {
+        if (!date) {
+            return timeSlots;
+        }
+
+        const now = new Date();
+
+        // Appointment must start at least 1 hour from now.
+        const minimumAllowedTime = new Date(
+            now.getTime() + 60 * 60 * 1000
+        );
+
+        const durationInMinutes =
+            service?.duration_in_minutes ?? 0;
+
+        const filledSlots =
+            nutritionist?.filled_slots ?? [];
+
+        return timeSlots.filter((slot) => {
+            /*
+             * Create the selected slot using local time.
+             */
+            const slotStart = new Date(
+                `${date}T${slot}:00`
+            );
+
+            /*
+             * Don't allow appointments less than
+             * one hour from now.
+             */
+            if (slotStart < minimumAllowedTime) {
+                return false;
+            }
+
+            /*
+             * Calculate the end of the new appointment
+             * based on the selected service duration.
+             */
+            const slotEnd = new Date(
+                slotStart.getTime() +
+                durationInMinutes * 60 * 1000
+            );
+
+            /*
+             * Check whether this appointment overlaps
+             * any existing appointment.
+             */
+            const overlaps = filledSlots.some(
+                (filledSlot) => {
+                    const filledStart = new Date(
+                        filledSlot.start_date_time
+                    );
+
+                    const filledEnd = new Date(
+                        filledSlot.end_date_time
+                    );
+
+                    return (
+                        slotStart < filledEnd &&
+                        slotEnd > filledStart
+                    );
+                }
+            );
+
+            return !overlaps;
+        });
+    }, [
+        date,
+        timeSlots,
+        service?.duration_in_minutes,
+        nutritionist?.filled_slots,
+    ]);
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -40,18 +127,25 @@ export default function AppointmentForm({
         setIsSubmitting(true);
 
         try {
-            await createAppointment ({
+            await createAppointment({
                 guest_name: name,
                 guest_email: email,
-                start_appointment_date_time: `${date}T${time}:00`,
+                start_appointment_date_time:
+                    `${date}T${time}:00`,
                 nutritionist_email: nutritionist.email,
                 service_name: service?.name,
             });
 
             onSuccess();
         } catch (error) {
-            console.error("Failed to schedule appointment:", error);
-            setError("Could not schedule the appointment. Please try again.");
+            console.error(
+                "Failed to schedule appointment:",
+                error
+            );
+
+            setError(
+                "Could not schedule the appointment. Please try again."
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -64,7 +158,9 @@ export default function AppointmentForm({
         >
             <input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) =>
+                    setName(e.target.value)
+                }
                 placeholder="Your name"
                 required
                 className="h-11 w-full rounded-lg border border-gray-300 px-4"
@@ -73,7 +169,9 @@ export default function AppointmentForm({
             <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                    setEmail(e.target.value)
+                }
                 placeholder="Your email"
                 required
                 className="h-11 w-full rounded-lg border border-gray-300 px-4"
@@ -83,26 +181,38 @@ export default function AppointmentForm({
                 <input
                     type="date"
                     value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    min={today}
+                    onChange={(e) => {
+                        setDate(e.target.value);
+                        setTime("");
+                    }}
                     required
                     className="h-11 rounded-lg border border-gray-300 px-4"
                 />
 
                 <select
                     value={time}
-                    onChange={(e) => setTime(e.target.value)}
+                    onChange={(e) =>
+                        setTime(e.target.value)
+                    }
                     required
+                    disabled={!date}
                     className="h-11 rounded-lg border border-gray-300 px-4"
                 >
                     <option value="">
                         Select time
                     </option>
 
-                    {timeSlots.map((slot) => (
-                        <option key={slot} value={slot}>
-                            {slot}
-                        </option>
-                    ))}
+                    {availableTimeSlots.map(
+                        (slot) => (
+                            <option
+                                key={slot}
+                                value={slot}
+                            >
+                                {slot}
+                            </option>
+                        )
+                    )}
                 </select>
             </div>
 
@@ -112,21 +222,15 @@ export default function AppointmentForm({
                 </p>
             )}
 
-            <button
+            <Button
                 type="submit"
+                variant="orange"
                 disabled={isSubmitting}
-                className="
-                    h-11 w-full rounded-lg
-                    bg-[rgb(228,150,108)]
-                    font-semibold text-white
-                    disabled:cursor-not-allowed
-                    disabled:opacity-50
-                "
             >
                 {isSubmitting
                     ? "Scheduling..."
                     : "Request Appointment"}
-            </button>
+            </Button>
         </form>
     );
 }
