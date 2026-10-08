@@ -1,18 +1,16 @@
 import { useState } from "react";
-import {
-    MapPin,
-    BriefcaseMedical,
-    CircleDollarSign,
-    CalendarDays,
-    Globe,
-} from "lucide-react";
-import Button from "../common/Button";
+import { MapPin } from "lucide-react";
+import NutritionistServiceSelector from "./NutritionistServiceSelector";
+import NutritionistActions from "./NutritionistActions";
 import AppointmentModal from "../appointments/AppointmentModal";
 
-export default function NutritionistCard({ nutritionist }) {
-    const [selectedService, setSelectedService] = useState(
-        nutritionist.services?.[0] || null
-    );
+export default function NutritionistCard({
+                                             nutritionist,
+                                         }) {
+    const [selectedService, setSelectedService] =
+        useState(
+            nutritionist.services?.[0] ?? null
+        );
 
     const [isAppointmentOpen, setIsAppointmentOpen] =
         useState(false);
@@ -20,14 +18,6 @@ export default function NutritionistCard({ nutritionist }) {
     const photo =
         nutritionist.photo ||
         "https://placehold.co/160x160?text=Photo";
-
-    function handleServiceChange(event) {
-        const service = nutritionist.services.find(
-            (item) => item.name === event.target.value
-        );
-
-        setSelectedService(service);
-    }
 
     return (
         <>
@@ -60,7 +50,6 @@ export default function NutritionistCard({ nutritionist }) {
                             Dietitian
                         </p>
 
-                        {/* Address of selected service */}
                         <div className="mt-3 flex items-center gap-2 text-gray-600">
                             <MapPin
                                 size={18}
@@ -68,82 +57,26 @@ export default function NutritionistCard({ nutritionist }) {
                             />
 
                             <span>
-                                {selectedService?.location?.address ||
+                                {selectedService?.location?.address ??
                                     "Address unavailable"}
                             </span>
                         </div>
                     </div>
 
-                    {/* Services */}
-                    <div className="w-64 shrink-0">
-                        <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-                            <BriefcaseMedical
-                                size={18}
-                                className="text-[rgb(61,170,141)]"
-                            />
-
-                            Service
-                        </label>
-
-                        <select
-                            value={selectedService?.name || ""}
-                            onChange={handleServiceChange}
-                            className="
-                                h-11 w-full rounded-lg
-                                border border-gray-300
-                                bg-white px-3
-                                text-sm text-gray-700
-                                outline-none
-                                focus:border-[rgb(61,170,141)]
-                            "
-                        >
-                            {nutritionist.services.map(
-                                (service) => (
-                                    <option
-                                        key={`${service.name}-${service.price}`}
-                                        value={service.name}
-                                    >
-                                        {service.name}
-                                    </option>
-                                )
-                            )}
-                        </select>
-
-                        {selectedService && (
-                            <div className="mt-3 flex items-center gap-2 font-semibold text-gray-800">
-                                <CircleDollarSign
-                                    size={19}
-                                    className="text-[rgb(61,170,141)]"
-                                />
-
-                                <span>
-                                    €
-                                    {Number(
-                                        selectedService.price
-                                    ).toFixed(2)}
-                                </span>
-                            </div>
-                        )}
-                    </div>
+                    {/* Service */}
+                    <NutritionistServiceSelector
+                        services={nutritionist.services}
+                        selectedService={selectedService}
+                        onChange={setSelectedService}
+                    />
 
                     {/* Actions */}
-                    <div className="flex w-48 shrink-0 flex-col gap-3">
-                        <Button
-                            variant="lightorange"
-                            onClick={() =>
-                                setIsAppointmentOpen(true)
-                            }
-                        >
-                            Schedule Appointment
-                        </Button>
-
-                        <Button
-                            variant="lightgreen"
-                            onClick={() => null}
-                        >
-                            Website
-                        </Button>
-                    </div>
+                    <NutritionistActions
+                        onSchedule={() =>
+                            setIsAppointmentOpen(true)
+                        }
+                        onWebsite={() => null}
+                    />
                 </div>
             </article>
 

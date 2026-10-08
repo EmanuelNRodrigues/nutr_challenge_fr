@@ -1,17 +1,23 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NutritionistCard from "./NutritionistCard";
+import Button from "../common/Button";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function NutritionistList({ nutritionists }) {
     const [currentPage, setCurrentPage] = useState(1);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [nutritionists]);
+
     const totalPages = Math.ceil(
         nutritionists.length / ITEMS_PER_PAGE
     );
 
     const currentNutritionists = useMemo(() => {
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const start =
+            (currentPage - 1) * ITEMS_PER_PAGE;
 
         return nutritionists.slice(
             start,
@@ -39,48 +45,48 @@ export default function NutritionistList({ nutritionists }) {
     return (
         <section className="mt-8">
             <div className="space-y-4">
-                {currentNutritionists.map((nutritionist) => (
-                    <NutritionistCard
-                        key={nutritionist.id}
-                        nutritionist={nutritionist}
-                    />
-                ))}
+                {currentNutritionists.map(
+                    (nutritionist) => (
+                        <NutritionistCard
+                            key={nutritionist.id}
+                            nutritionist={nutritionist}
+                        />
+                    )
+                )}
             </div>
 
             {totalPages > 1 && (
                 <div className="mt-8 flex items-center justify-center gap-2">
-                    <button
+                    <Button
+                        variant="pagination"
                         onClick={() =>
                             goToPage(Math.max(1, currentPage - 1))
                         }
                         disabled={currentPage === 1}
-                        className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
+                        className="w-10 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                         ‹
-                    </button>
+                    </Button>
 
                     {Array.from(
                         { length: totalPages },
                         (_, index) => index + 1
                     ).map((page) => (
-                        <button
+                        <Button
                             key={page}
-                            onClick={() => goToPage(page)}
-                            className={`
-                                h-10 min-w-10 rounded-lg px-3
-                                font-medium
-                                ${
+                            variant={
                                 currentPage === page
-                                    ? "bg-[rgb(61,170,141)] text-white"
-                                    : "text-gray-600 hover:bg-gray-100"
+                                    ? "green"
+                                    : "pagination"
                             }
-                            `}
+                            onClick={() => goToPage(page)}
                         >
                             {page}
-                        </button>
+                        </Button>
                     ))}
 
-                    <button
+                    <Button
+                        variant="pagination"
                         onClick={() =>
                             goToPage(
                                 Math.min(
@@ -90,10 +96,10 @@ export default function NutritionistList({ nutritionists }) {
                             )
                         }
                         disabled={currentPage === totalPages}
-                        className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
+                        className="w-10 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                         ›
-                    </button>
+                    </Button>
                 </div>
             )}
         </section>
