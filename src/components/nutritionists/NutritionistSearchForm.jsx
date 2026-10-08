@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
 import Button from "../common/Button";
 
 export default function NutritionistSearchForm({ onSearch }) {
@@ -64,9 +63,8 @@ export default function NutritionistSearchForm({ onSearch }) {
                 <Button
                     type="submit"
                     variant="orange"
-                    className="flex h-12 items-center gap-2 px-7"
+                    className="flex h-12 items-center gap-2 px-12"
                 >
-                    <Search size={19} />
                     Search
                 </Button>
             </div>

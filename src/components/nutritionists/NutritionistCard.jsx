@@ -21,6 +21,14 @@ export default function NutritionistCard({ nutritionist }) {
         nutritionist.photo ||
         "https://placehold.co/160x160?text=Photo";
 
+    function handleServiceChange(event) {
+        const service = nutritionist.services.find(
+            (item) => item.name === event.target.value
+        );
+
+        setSelectedService(service);
+    }
+
     return (
         <>
             <article
@@ -52,6 +60,7 @@ export default function NutritionistCard({ nutritionist }) {
                             Dietitian
                         </p>
 
+                        {/* Address of selected service */}
                         <div className="mt-3 flex items-center gap-2 text-gray-600">
                             <MapPin
                                 size={18}
@@ -59,7 +68,7 @@ export default function NutritionistCard({ nutritionist }) {
                             />
 
                             <span>
-                                {nutritionist.locationAddress ||
+                                {selectedService?.location?.address ||
                                     "Address unavailable"}
                             </span>
                         </div>
@@ -77,19 +86,8 @@ export default function NutritionistCard({ nutritionist }) {
                         </label>
 
                         <select
-                            value={
-                                selectedService?.name || ""
-                            }
-                            onChange={(e) => {
-                                const service =
-                                    nutritionist.services.find(
-                                        (item) =>
-                                            item.name ===
-                                            e.target.value
-                                    );
-
-                                setSelectedService(service);
-                            }}
+                            value={selectedService?.name || ""}
+                            onChange={handleServiceChange}
                             className="
                                 h-11 w-full rounded-lg
                                 border border-gray-300
@@ -119,9 +117,10 @@ export default function NutritionistCard({ nutritionist }) {
                                 />
 
                                 <span>
-                                    €{Number(
-                                    selectedService.price
-                                ).toFixed(2)}
+                                    €
+                                    {Number(
+                                        selectedService.price
+                                    ).toFixed(2)}
                                 </span>
                             </div>
                         )}
@@ -131,14 +130,16 @@ export default function NutritionistCard({ nutritionist }) {
                     <div className="flex w-48 shrink-0 flex-col gap-3">
                         <Button
                             variant="lightorange"
-                            onClick={() => setIsAppointmentOpen(true)}
+                            onClick={() =>
+                                setIsAppointmentOpen(true)
+                            }
                         >
                             Schedule Appointment
                         </Button>
 
                         <Button
                             variant="lightgreen"
-                            onClick={() => null }
+                            onClick={() => null}
                         >
                             Website
                         </Button>
@@ -150,7 +151,9 @@ export default function NutritionistCard({ nutritionist }) {
                 nutritionist={nutritionist}
                 selectedService={selectedService}
                 isOpen={isAppointmentOpen}
-                onClose={() => setIsAppointmentOpen(false)}
+                onClose={() =>
+                    setIsAppointmentOpen(false)
+                }
             />
         </>
     );

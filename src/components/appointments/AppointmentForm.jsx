@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { createAppointment } from "../../services/appointmentService";
 import Button from "../common/Button.jsx";
+import {
+    createUTCDate,
+    getTodayUTC,
+    toUTCISOString,
+} from "../../utils/dateUtils";
 
 function generateTimeSlots() {
     const slots = [];
@@ -37,15 +42,10 @@ export default function AppointmentForm({
         []
     );
 
-    const today = useMemo(() => {
-        const now = new Date();
-
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-    }, []);
+    const today = useMemo(
+        () => getTodayUTC(),
+        []
+    );
 
     const availableTimeSlots = useMemo(() => {
         if (!date) {
@@ -54,7 +54,6 @@ export default function AppointmentForm({
 
         const now = new Date();
 
-        // Appointment must start at least 1 hour from now.
         const minimumAllowedTime = new Date(
             now.getTime() + 60 * 60 * 1000
         );
@@ -66,34 +65,20 @@ export default function AppointmentForm({
             nutritionist?.filled_slots ?? [];
 
         return timeSlots.filter((slot) => {
-            /*
-             * Create the selected slot using local time.
-             */
-            const slotStart = new Date(
-                `${date}T${slot}:00`
+            const slotStart = createUTCDate(
+                date,
+                slot
             );
 
-            /*
-             * Don't allow appointments less than
-             * one hour from now.
-             */
             if (slotStart < minimumAllowedTime) {
                 return false;
             }
 
-            /*
-             * Calculate the end of the new appointment
-             * based on the selected service duration.
-             */
             const slotEnd = new Date(
                 slotStart.getTime() +
                 durationInMinutes * 60 * 1000
             );
 
-            /*
-             * Check whether this appointment overlaps
-             * any existing appointment.
-             */
             const overlaps = filledSlots.some(
                 (filledSlot) => {
                     const filledStart = new Date(
@@ -131,7 +116,7 @@ export default function AppointmentForm({
                 guest_name: name,
                 guest_email: email,
                 start_appointment_date_time:
-                    `${date}T${time}:00`,
+                    toUTCISOString(date, time),
                 nutritionist_email: nutritionist.email,
                 service_name: service?.name,
             });
@@ -163,7 +148,10 @@ export default function AppointmentForm({
                 }
                 placeholder="Your name"
                 required
-                className="h-11 w-full rounded-lg border border-gray-300 px-4"
+                className="
+                    h-11 w-full rounded-lg
+                    border border-gray-300 px-4
+                "
             />
 
             <input
@@ -174,7 +162,10 @@ export default function AppointmentForm({
                 }
                 placeholder="Your email"
                 required
-                className="h-11 w-full rounded-lg border border-gray-300 px-4"
+                className="
+                    h-11 w-full rounded-lg
+                    border border-gray-300 px-4
+                "
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -187,7 +178,10 @@ export default function AppointmentForm({
                         setTime("");
                     }}
                     required
-                    className="h-11 rounded-lg border border-gray-300 px-4"
+                    className="
+                        h-11 rounded-lg
+                        border border-gray-300 px-4
+                    "
                 />
 
                 <select
@@ -197,7 +191,10 @@ export default function AppointmentForm({
                     }
                     required
                     disabled={!date}
-                    className="h-11 rounded-lg border border-gray-300 px-4"
+                    className="
+                        h-11 rounded-lg
+                        border border-gray-300 px-4
+                    "
                 >
                     <option value="">
                         Select time
