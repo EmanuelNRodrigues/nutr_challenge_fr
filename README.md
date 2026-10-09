@@ -1,16 +1,65 @@
-# React + Vite
+# Nutr Challenge Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for the Nutr Challenge project, built with React and Vite.
 
-Currently, two official plugins are available:
+The application communicates with the [Nutr Challenge API](https://github.com/EmanuelNRodrigues/nutr_challenge_api) to access backend functionality.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+* React
+* Vite
+* React Router
+* Tailwind CSS
+* Lucide React icons
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+* Node.js (use a version compatible with the project's Vite version)
+* npm
+* Docker
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/EmanuelNRodrigues/nutr_challenge_fr.git
+cd nutr_challenge_fr
+```
+
+### 2. Start the application with Docker
+
+```bash
+docker compose up --build
+```
+
+Open the local URL displayed in your terminal by Vite.
+I expect to be http://localhost:5173/
+
+
+## Relevant Pages
+
+http://localhost:5173/ - Guest Appointment Page
+http://localhost:5173/nutritionist/:id - Selects one Nutritionist page to review Guest Appointments
+
+## Backend Configuration
+
+The frontend depends on the Nutr Challenge API.
+
+The Vite configuration includes a development proxy for `/api` targeting `http://host.docker.internal:3000`, which is intended for a Docker-based development environment.
+
+Ensure the backend is running and that the API proxy target matches your environment.
+
+If the API URL is configurable through environment variables, document the required variable names and provide an `.env.example` file.
+
+The generated production assets are placed in the `dist/` directory.
+
+## Related Repository
+
+* [Nutr Challenge API](https://github.com/EmanuelNRodrigues/nutr_challenge_api)
+
+## Notes
+
+* Vite provides the development server and hot module replacement.
+* The API proxy must be configured correctly for frontend-backend communication.
+* Do not commit environment files containing secrets.
