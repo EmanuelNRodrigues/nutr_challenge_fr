@@ -7,24 +7,6 @@ import {
     toUTCISOString,
 } from "../../utils/dateUtils";
 
-function generateTimeSlots() {
-    const slots = [];
-
-    for (let hour = 8; hour <= 20; hour++) {
-        for (let minute = 0; minute < 60; minute += 15) {
-            if (hour === 20 && minute > 0) {
-                continue;
-            }
-
-            slots.push(
-                `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-            );
-        }
-    }
-
-    return slots;
-}
-
 export default function AppointmentForm({
                                             nutritionist,
                                             service,
@@ -37,34 +19,30 @@ export default function AppointmentForm({
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const timeSlots = useMemo(
-        () => generateTimeSlots(),
-        []
-    );
+    const allTimeSlots = [
+                               "08:00", "08:15", "08:30", "08:45",
+                               "09:00", "09:15", "09:30", "09:45",
+                               "10:00", "10:15", "10:30", "10:45",
+                               "11:00", "11:15", "11:30", "11:45",
+                               "12:00", "12:15", "12:30", "12:45",
+                               "13:00", "13:15", "13:30", "13:45",
+                               "14:00", "14:15", "14:30", "14:45",
+                               "15:00", "15:15", "15:30", "15:45",
+                               "16:00", "16:15", "16:30", "16:45",
+                               "17:00", "17:15", "17:30", "17:45",
+                               "18:00", "18:15", "18:30", "18:45",
+                               "19:00", "19:15", "19:30", "19:45"]
 
-    const today = useMemo(
-        () => getTodayUTC(),
-        []
-    );
+    const today = useMemo( () => getTodayUTC(), [] );
 
     const availableTimeSlots = useMemo(() => {
-        if (!date) {
-            return timeSlots;
-        }
+        if (!date) { return allTimeSlots; }
 
         const now = new Date();
 
-        const minimumAllowedTime = new Date(
-            now.getTime() + 60 * 60 * 1000
-        );
+        const minimumAllowedTime = new Date( now.getTime() + 60 * 60 * 1000 );
 
-        const durationInMinutes =
-            service?.duration_in_minutes ?? 0;
-
-        const filledSlots =
-            nutritionist?.filled_slots ?? [];
-
-        return timeSlots.filter((slot) => {
+        return allTimeSlots.filter((slot) => {
             const slotStart = createUTCDate(
                 date,
                 slot
@@ -76,23 +54,16 @@ export default function AppointmentForm({
 
             const slotEnd = new Date(
                 slotStart.getTime() +
-                durationInMinutes * 60 * 1000
+                service.duration_in_minutes * 60 * 1000
             );
 
-            const overlaps = filledSlots.some(
+            const overlaps = nutritionist.filled_slots.some(
                 (filledSlot) => {
-                    const filledStart = new Date(
-                        filledSlot.start_date_time
-                    );
+                    const filledStart = new Date(filledSlot.start_date_time);
 
-                    const filledEnd = new Date(
-                        filledSlot.end_date_time
-                    );
+                    const filledEnd = new Date(filledSlot.end_date_time);
 
-                    return (
-                        slotStart < filledEnd &&
-                        slotEnd > filledStart
-                    );
+                    return (slotStart < filledEnd && slotEnd > filledStart);
                 }
             );
 
@@ -100,7 +71,7 @@ export default function AppointmentForm({
         });
     }, [
         date,
-        timeSlots,
+        allTimeSlots,
         service?.duration_in_minutes,
         nutritionist?.filled_slots,
     ]);

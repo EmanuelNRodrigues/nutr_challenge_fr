@@ -1,7 +1,10 @@
+import Button from "../common/Button";
+
 export default function Modal({ children, onClose }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="relative w-[520px] rounded-xl bg-white p-6 shadow-xl">
+                {/*Top right close button*/}
                 <button
                     type="button"
                     onClick={onClose}
@@ -10,7 +13,6 @@ export default function Modal({ children, onClose }) {
                 >
                     ×
                 </button>
-
                 {children}
             </div>
         </div>

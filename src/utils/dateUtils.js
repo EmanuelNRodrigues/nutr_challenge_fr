@@ -35,10 +35,3 @@ export function formatUTCTime(dateTime) {
         }
     );
 }
-
-export function formatUTCDateTime(dateTime) {
-    const date = formatUTCDate(dateTime);
-    const time = formatUTCTime(dateTime);
-
-    return `${date} ${time}`;
-}
