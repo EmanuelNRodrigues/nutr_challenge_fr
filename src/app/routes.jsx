@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
                 element: <NutritionistSearchPage />,
             },
             {
-                path: "nutritionist/:id/appointments/requests",
+                path: "nutritionist/:id",
                 element: <AppointmentRequestsPage />,
             },
         ],

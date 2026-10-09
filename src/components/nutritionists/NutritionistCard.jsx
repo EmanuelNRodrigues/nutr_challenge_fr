@@ -47,7 +47,7 @@ export default function NutritionistCard({
                         </h2>
 
                         <p className="mt-1 text-base font-medium text-gray-600">
-                            Dietitian
+                            Nutritionist
                         </p>
 
                         <div className="mt-3 flex items-center gap-2 text-gray-600">

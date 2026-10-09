@@ -56,11 +56,6 @@ export default function useAppointments(nutritionistId) {
 
             setAppointments(formattedAppointments);
         } catch (error) {
-            console.error(
-                "Failed to fetch appointments:",
-                error
-            );
-
             setError(error.message);
         } finally {
             setLoading(false);
@@ -89,11 +84,6 @@ export default function useAppointments(nutritionistId) {
             // Refresh pending appointments from backend
             await fetchAppointments();
         } catch (error) {
-            console.error(
-                "Failed to accept appointment:",
-                error
-            );
-
             throw error;
         }
     }
@@ -116,6 +106,8 @@ export default function useAppointments(nutritionistId) {
             // Refresh pending appointments from backend
             await fetchAppointments();
         } catch (error) {
+            // This should be a message to the user
+
             console.error(
                 "Failed to reject appointment:",
                 error

@@ -123,15 +123,10 @@ export default function AppointmentForm({
 
             onSuccess();
         } catch (error) {
-            console.error(
-                "Failed to schedule appointment:",
-                error
-            );
+            setError( error.message || "Could not schedule the appointment. Please try again." );
+        }
 
-            setError(
-                "Could not schedule the appointment. Please try again."
-            );
-        } finally {
+        finally {
             setIsSubmitting(false);
         }
     }

@@ -1,42 +1,15 @@
-import { useEffect, useState } from "react";
 import NutritionistSearchForm from "../../components/nutritionists/NutritionistSearchForm";
 import NutritionistList from "../../components/nutritionists/NutritionistList";
 import Loading from "../../components/common/Loading";
 import PageContainer from "../../components/layout/PageContainer";
-import { searchNutritionists } from "../../services/nutritionistService";
+import useNutritionists from "../../hooks/useNutritionists";
 
 export default function NutritionistSearchPage() {
-    const [nutritionists, setNutritionists] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    async function fetchNutritionists({ query = "", location = "" } = {}) {
-        setLoading(true);
-
-        try {
-            const results = await searchNutritionists({
-                query,
-                location,
-            });
-
-            setNutritionists(results);
-        } catch (error) {
-            console.error("Error fetching nutritionists:", error);
-            setNutritionists([]);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        fetchNutritionists();
-    }, []);
-
-    async function handleSearch({ query, location }) {
-        await fetchNutritionists({
-            query,
-            location,
-        });
-    }
+    const {
+        nutritionists,
+        loading,
+        search,
+    } = useNutritionists();
 
     return (
         <>
@@ -48,9 +21,7 @@ export default function NutritionistSearchPage() {
                             Find a Nutritionist
                         </h1>
 
-                        <NutritionistSearchForm
-                            onSearch={handleSearch}
-                        />
+                        <NutritionistSearchForm onSearch={search} />
                     </div>
                 </PageContainer>
             </section>
