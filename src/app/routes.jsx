@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import MainLayout from "../components/layout/MainLayout";
-import NutritionistSearchPage from "../pages/NutritionistSearch/NutritionistSearchPage";
-import AppointmentRequestsPage from "../pages/AppointmentRequests/AppointmentRequestPage.jsx";
+import MainLayout from "../shared/layout/MainLayout";
+import NutritionistSearchPage from "../features/find-nutritionist/pages/NutritionistSearchPage";
+import AppointmentRequestsPage from "../features/manage-appointment-requests/pages/AppointmentRequestPage.jsx";
 
 export const router = createBrowserRouter([
     {
